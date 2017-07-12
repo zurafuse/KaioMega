@@ -34,7 +34,8 @@ function render() {
 		}
 	//draw player
 	kaioPlayer.draw();
-	
+	//draw UI
+	kaioUI.draw();
 }
 
 function run() {

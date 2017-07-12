@@ -1,16 +1,44 @@
 //KAIOMEGA
 
 //define canvas
-var canvas = document.getElementById('canvas');
+var canvas = document.createElement('canvas');
+var canvas2 = document.createElement("canvas");
+document.body.appendChild(canvas);
 var ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth * 0.8;
-canvas.height = canvas.width * 0.6;
+var kaioIsVert = false;
+//Determine if screen size is vertical (such as mobile) or horizontal (PC or wide mobile).
+if (window.innerHeight / window.innerWidth >  1.5)
+{
+	kaioIsVert = true;
+}
+
+if (!(kaioIsVert))
+{
+	canvas.width = window.innerWidth * 0.50;
+	canvas.height = canvas.width * 0.75;
+	document.body.appendChild(canvas2);	
+	var ctx2 = canvas2.getContext('2d');
+	canvas2.width = (window.innerWidth - canvas.width) * 0.9;
+	canvas2.height = canvas.height;
+}
+else
+{
+	canvas.width = window.innerWidth * 0.95;
+	canvas.height = canvas.width * 0.5;
+	var brBreak = document.createElement("br");
+	document.body.appendChild(brBreak);
+	document.body.appendChild(canvas2);
+	var ctx2 = canvas2.getContext('2d');
+	canvas2.width = canvas.width;
+	canvas2.height = window.innerHeight - canvas.height;
+}
 
 
 //Create a master Kaio object to describe game state, game information, etc.
 var kaiomega = {
 	gamestate: "play",
-	spriteSizes: canvas.width / 15,
+	spriteWidth: canvas.width / 16,
+	spriteHeight: canvas.height / 10,
 	backgrounds: []
 };
 
@@ -52,10 +80,10 @@ function kaioBackClass(img, width, height, fill, x, y){
 	(typeof y !== 'undefined') ?  y : 0;
 	(typeof fill !== 'undefined') ?  fill : "other";
 	this.img = img;
-	this.width = width * kaiomega.spriteSizes;
-	this.height = height * kaiomega.spriteSizes;
-	this.x = x * kaiomega.spriteSizes;
-	this.y = y * kaiomega.spriteSizes;
+	this.width = width * kaiomega.spriteWidth;
+	this.height = height * kaiomega.spriteHeight;
+	this.x = x * kaiomega.spriteWidth;
+	this.y = y * kaiomega.spriteHeight;
 	this.type = fill;
 	this.drawFill = function(){
 		for (i = 0; i < canvas.height; i += this.height)
@@ -72,15 +100,15 @@ function kaioBackClass(img, width, height, fill, x, y){
 
 //Create a class for the characters
 function kaioCharacter() {
-	this.x = kaiomega.spriteSizes * 4;
-	this.y = kaiomega.spriteSizes * 3;
-	this.width = kaiomega.spriteSizes;
-	this.height = kaiomega.spriteSizes * 1.3;
+	this.x = kaiomega.spriteWidth * 4;
+	this.y = kaiomega.spriteHeight * 3;
+	this.width = kaiomega.spriteWidth;
+	this.height = kaiomega.spriteHeight * 1.3;
 	this.sx = 0;
 	this.sy = 0;
 	this.swidth = 50;
 	this.sheight = 50;
-	this.speed = canvas.width * 0.005;
+	this.speed = (kaiomega.spriteHeight) * 0.08;
 	this.dir = "default";
 	this.mobile = false;
 	this.isInEvent = false;
@@ -152,6 +180,66 @@ var kaioController = {
 
 
 //Create the UI object.
+var kaioUI = {
+	spriteWidth: canvas2.width / 16,
+	spriteHeight: canvas2.height / 10,
+	joyStick: 
+	{
+		left: {},
+		right: {},
+		up: {},
+		down: {}
+	},
+	draw: function()
+	{
+		//draw joy stick for mobile devices
+		//left
+		ctx2.beginPath();
+		ctx2.moveTo(this.joyStick.left.x, this.joyStick.left.y);
+		ctx2.lineTo(this.joyStick.left.x + this.joyStick.left.width, this.joyStick.left.y - (this.joyStick.left.height * 0.5));
+		ctx2.lineTo(this.joyStick.left.x + this.joyStick.left.width, this.joyStick.left.y + (this.joyStick.left.height * 0.5));
+		ctx2.fill();
+		//right
+		ctx2.beginPath();
+		ctx2.moveTo(this.joyStick.right.x, this.joyStick.right.y);
+		ctx2.lineTo(this.joyStick.right.x, this.joyStick.right.y - (this.joyStick.right.height * 0.5));
+		ctx2.lineTo(this.joyStick.right.x + this.joyStick.right.width, this.joyStick.right.y);
+		ctx2.lineTo(this.joyStick.right.x, this.joyStick.right.y + (this.joyStick.right.height * 0.5));		
+		ctx2.fill();
+		//up
+		ctx2.beginPath();
+		ctx2.moveTo(this.joyStick.up.x, this.joyStick.up.y);
+		ctx2.lineTo(this.joyStick.up.x + (this.joyStick.up.width * 0.5), this.joyStick.up.y + this.joyStick.up.height);
+		ctx2.lineTo(this.joyStick.up.x - (this.joyStick.up.width * 0.5), this.joyStick.up.y + this.joyStick.up.height);
+		ctx2.fill();
+		//down
+		ctx2.beginPath();
+		ctx2.moveTo(this.joyStick.down.x, this.joyStick.down.y);
+		ctx2.lineTo(this.joyStick.down.x + (this.joyStick.down.width * 0.5), this.joyStick.down.y);
+		ctx2.lineTo(this.joyStick.down.x, this.joyStick.down.y + this.joyStick.down.height);
+		ctx2.lineTo(this.joyStick.down.x - (this.joyStick.down.width * 0.5), this.joyStick.down.y);
+		ctx2.fill();
+	}
+};
+kaioUI.joyStick.left.x = kaioUI.spriteWidth;
+kaioUI.joyStick.left.y = kaioUI.spriteWidth * 5;
+kaioUI.joyStick.left.width = kaioUI.spriteWidth * 2;
+kaioUI.joyStick.left.height = kaioUI.spriteWidth * 2;
+
+kaioUI.joyStick.right.x = kaioUI.spriteWidth * 8;
+kaioUI.joyStick.right.y = kaioUI.spriteWidth * 5;
+kaioUI.joyStick.right.width = kaioUI.spriteWidth * 2;
+kaioUI.joyStick.right.height = kaioUI.spriteWidth * 2;
+
+kaioUI.joyStick.up.x = kaioUI.spriteWidth * 5.5;
+kaioUI.joyStick.up.y = kaioUI.spriteWidth * 0.6;
+kaioUI.joyStick.up.width = kaioUI.spriteWidth * 2;
+kaioUI.joyStick.up.height = kaioUI.spriteWidth * 2;
+
+kaioUI.joyStick.down.x = kaioUI.spriteWidth * 5.5;
+kaioUI.joyStick.down.y = kaioUI.spriteWidth * 7.5;
+kaioUI.joyStick.down.width = kaioUI.spriteWidth * 2;
+kaioUI.joyStick.down.height = kaioUI.spriteWidth * 2;
 
 
 //Create the Conversation object.
