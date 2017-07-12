@@ -6,7 +6,7 @@ document.addEventListener('keydown', function(e) {
         39: 'right',
         40: 'down'
     };
-    kaiokaioPlayer.dir = allowedKeys[e.keyCode];
+    kaioPlayer.dir = allowedKeys[e.keyCode];
 	switch (e.keyCode){
 		case 37:
 			kaioController.left = true;
@@ -62,6 +62,12 @@ window.addEventListener("touchend", function (e) {
 function getTouchPos(canvasDom, touchEvent) {
   var thisXPos = touchEvent.touches[0].clientX;
   var thisYPos = touchEvent.touches[0].clientY - canvas.height;
+
+  if (!(kaioIsVert))
+  {
+	thisXPos = touchEvent.touches[0].clientX - canvas.width;
+	thisYPos = touchEvent.touches[0].clientY;
+  }
   
   if (thisXPos < kaioUI.joyStick.left.x + (kaioUI.joyStick.left.width * 1.3) && thisXPos > kaioUI.joyStick.left.x * 0.7 &&
 	thisYPos > kaioUI.joyStick.left.y - (kaioUI.joyStick.left.height * 0.7) && thisYPos < kaioUI.joyStick.left.y + (kaioUI.joyStick.left.height * 0.7))
