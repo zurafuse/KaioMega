@@ -23,15 +23,14 @@ function render() {
 	//draw backgrounds
 	for (i in kaiomega.backgrounds)
 		{
-			if (kaiomega.backgrounds[i].type == "fill")
-			{
-				kaiomega.backgrounds[i].drawFill();
-			}
-			else
-			{
-				kaiomega.backgrounds[i].draw();
-			}
+			kaiomega.backgrounds[i].draw();
 		}
+	//draw blocks
+	for (i in kaiomega.blocks)
+	{
+		kaiomega.blocks[i].draw();
+	}
+
 	//draw player
 	kaioPlayer.draw();
 	//draw UI

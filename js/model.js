@@ -39,7 +39,70 @@ var kaiomega = {
 	gamestate: "play",
 	spriteWidth: canvas.width / 16,
 	spriteHeight: canvas.height / 10,
-	backgrounds: []
+	inEvent: false,
+	x: 0,
+	y: 0,
+	xEnd: 0,
+	yEnd: 0,
+	blocks: [],
+	backgrounds: [],
+	//determine if two things are colliding
+	collides: function(obj1, obj2)
+	{
+		if (obj1.x + obj1.width > obj2.x && obj1.x < obj2.x + obj2.width &&
+			obj1.y + obj1.height > obj2.y && obj1.y < obj2.height + obj2.y)
+			{return true;}
+		else
+			{return false;}
+	},
+	moveEverything: function(obj, dir)
+	{
+		switch(dir)
+		{
+			case "up":
+				obj.y += kaioPlayer.speed;
+				break;
+			case "down":		
+				obj.y -= kaioPlayer.speed;
+				break;
+			case "left":			
+				obj.x += kaioPlayer.speed;
+				break;
+			case "right":			
+				obj.x -= kaioPlayer.speed;
+				break;
+		}		
+	},
+	moveAll: function(dir)
+	{
+		for (i in this.blocks)
+		{
+			this.moveEverything(this.blocks[i], dir);
+		}
+		for (i in this.backgrounds)
+		{
+			this.moveEverything(this.backgrounds[i], dir);
+		}
+		switch(dir)
+		{
+			case "up":
+				this.y += kaioPlayer.speed;
+				this.yEnd += kaioPlayer.speed;
+				break;
+			case "down":		
+				this.y -= kaioPlayer.speed;
+				this.yEnd -= kaioPlayer.speed;
+				break;
+			case "left":			
+				this.x += kaioPlayer.speed;
+				this.xEnd += kaioPlayer.speed;
+				break;
+			case "right":			
+				this.x -= kaioPlayer.speed;
+				this.xEnd -= kaioPlayer.speed;
+				break;
+		}
+	}
 };
 
 
@@ -59,6 +122,11 @@ var kaioImages = {
 		grass: new Image()
 		
 	},
+	blocks: 
+	{
+		rock: new Image()
+	
+	},
 	setPics: function(){
 		this.holder.src = "images/holder.png";
 		this.kaio.down.src = "images/kaio_down.png";
@@ -66,6 +134,7 @@ var kaioImages = {
 		this.kaio.left.src = "images/kaio_left.png";		
 		this.kaio.right.src = "images/kaio_right.png";		
 		this.backgrounds.grass.src = "images/grass.png";
+		this.blocks.rock.src = "images/rock.png";
 	}
 };
 kaioImages.setPics();
@@ -85,21 +154,33 @@ function kaioBackClass(img, width, height, fill, x, y){
 	this.x = x * kaiomega.spriteWidth;
 	this.y = y * kaiomega.spriteHeight;
 	this.type = fill;
-	this.drawFill = function(){
-		for (i = 0; i < canvas.height; i += this.height)
-		{
-			for (j = 0; j < canvas.width; j += this.width){
-				ctx.drawImage(this.img, j, i, this.width, this.height);
-			}
-		}
-	};
 	this.draw = function(){
 		ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
 	};
 }
 
-//Create a class for the characters
-function kaioCharacter() {
+//Create a class for collide-able objects
+var kaioObject = function(img, x, y, width, height){
+	(typeof width !== 'undefined') ?  width : 1;
+	(typeof height !== 'undefined') ?  height : 1;
+	(typeof x !== 'undefined') ?  x : 0;
+	(typeof y !== 'undefined') ?  y : 0;
+	this.x = x * kaiomega.spriteWidth;
+	this.y = y * kaiomega.spriteHeight;
+	this.sx = 0;
+	this.sy = 0;
+	this.swidth = 50;
+	this.sheight = 50;
+	this.width = width * kaiomega.spriteWidth;
+	this.height = height * kaiomega.spriteHeight;
+	this.img = img;
+	this.draw = function(){
+		ctx.drawImage(this.img, this.sx, this.sy, this.swidth, this.sheight, this.x, this.y, this.width, this.height);
+	};
+}
+
+//Create a class for the characters.
+var kaioCharacter = function() {
 	this.x = kaiomega.spriteWidth * 4;
 	this.y = kaiomega.spriteHeight * 3;
 	this.width = kaiomega.spriteWidth;
@@ -121,25 +202,92 @@ function kaioCharacter() {
 	};
 	this.img = this.pics.down;
 	this.timer = 0;
+	//determine if a moving thing is about to collide with a block
+	this.collides = function()
+	{
+		var objx = this.x;
+		var objy = this.y;
+		
+		switch(this.dir)
+		{
+		case "left":
+			objx -= this.speed;
+		case "right":
+			objx += this.speed;
+		case "up":
+			objy -= this.speed;
+		case "down":
+			objy += this.speed;
+		}
+		
+		for (i in kaiomega.blocks)
+		{
+		if (objx + this.width > kaiomega.blocks[i].x && objx < kaiomega.blocks[i].x + kaiomega.blocks[i].width &&
+			objy + this.height > kaiomega.blocks[i].y && objy < kaiomega.blocks[i].height + kaiomega.blocks[i].y)
+			{return true;}
+		else
+			{return false;}			
+		}
+	},
 	this.move = function(){
 		this.timer++;
 		switch (this.dir)
 		{
 			case "up":
 				this.img = this.pics.up;
-				this.y -= this.speed;
+				if (!(this.collides()))
+				{
+					if (this.y - (canvas.height * 0.5) >= kaiomega.y)
+					{
+						this.y -= this.speed;
+					}
+					else
+					{
+						kaiomega.moveAll(this.dir);
+					}
+				}
 				break;
 			case "down":
 				this.img = this.pics.down;
-				this.y += this.speed;
+				if (!(this.collides()))
+				{			
+					if (this.y + this.height + (canvas.height * 0.5) >= kaiomega.yEnd * kaiomega.spriteHeight)
+					{			
+						this.y += this.speed;
+					}
+					else
+					{
+						kaiomega.moveAll(this.dir);
+					}					
+				}
 				break;
 			case "left":
 				this.img = this.pics.left;
-				this.x -= this.speed;
+				if (!(this.collides()))
+				{		
+					if (this.x - (canvas.width * 0.5) >= kaiomega.x)
+					{				
+						this.x -= this.speed;
+					}
+					else
+					{
+						kaiomega.moveAll(this.dir);
+					}					
+				}
 				break;
 			case "right":
 				this.img = this.pics.right;
-				this.x += this.speed;
+				if (!(this.collides()))
+				{			
+					if (this.x + this.width + (canvas.width * 0.5) >= kaiomega.xEnd * kaiomega.spriteWidth)
+					{			
+						this.x += this.speed;
+					}
+					else
+					{
+						kaiomega.moveAll(this.dir);
+					}					
+				}
 				break;
 		}
 		if (this.timer > 2){
@@ -175,8 +323,6 @@ var kaioController = {
 	down: false,
 	up: false
 };
-
-//Create the Blocks class.
 
 
 //Create the UI object.
