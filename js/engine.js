@@ -1,40 +1,24 @@
 function update(mod) {
-	
-	
-	
-	if (kaiomega.gamestate == "play"){
-		//control the player's movements. If any of the keys are being pressed perform a movement.
-		//else, bring the player to his/her original animation.
-		if (!(kaioController.left == false && kaioController.right == false &&
-			kaioController.up == false && kaioController.down == false))
-			{
-				kaioPlayer.move();
-			}
-			else
-			{
-				kaioPlayer.sx = 0;
-			}
-	}	
+
+	if (kaiomega.gamestate == "play")
+		PlayUpdate(mod);
+	if (kaiomega.gamestate == "battle")
+		BattleUpdate(mod);
+	if (kaiomega.gamestate == "map")
+		MapUpdate(mod);
+	if (kaiomega.gamestate == "title")
+		TitleUpdate(mod);
 }
 
 function render() {
-	//clear canvas
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	//draw backgrounds
-	for (i in kaiomega.backgrounds)
-		{
-			kaiomega.backgrounds[i].draw();
-		}
-	//draw blocks
-	for (i in kaiomega.blocks)
-	{
-		kaiomega.blocks[i].draw();
-	}
-
-	//draw player
-	kaioPlayer.draw();
-	//draw UI
-	kaioUI.draw();
+	if (kaiomega.gamestate == "play")
+		PlayRender();
+	if (kaiomega.gamestate == "battle")
+		BattleRender();
+	if (kaiomega.gamestate == "map")
+		MapRender();
+	if (kaiomega.gamestate == "title")
+		TitleRender();
 }
 
 function run() {

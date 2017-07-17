@@ -1,5 +1,9 @@
 //Input
 document.addEventListener('keydown', function(e) {
+	if (kaiomega.gamestate == "title")
+	{
+		kaioTitle.start();
+	}
     var allowedKeys = {
         37: 'left',
         38: 'up',
@@ -40,10 +44,23 @@ document.addEventListener('keyup', function(e){
 	}
 });
 
+window.addEventListener("click", function (e) {
+	if (kaiomega.gamestate == "title")
+	{
+		kaioTitle.start();
+		window.removeEventListener("click");
+	}
+}, false);
 
 // touch event handlers
 // Set up touch events for mobile, etc
+// touch event handlers
+// Set up touch events for mobile, etc
 window.addEventListener("touchstart", function (e) {
+	if (kaiomega.gamestate == "title")
+	{
+		kaioTitle.start();
+	}
   mousePos = getTouchPos(canvas2, e);
   var touch = e.touches[0];
   var mouseEvent = new MouseEvent("mousedown", {

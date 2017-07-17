@@ -7,7 +7,7 @@ document.body.appendChild(canvas);
 var ctx = canvas.getContext('2d');
 var kaioIsVert = false;
 //Determine if screen size is vertical (such as mobile) or horizontal (PC or wide mobile).
-if (window.innerHeight / window.innerWidth >  1.5)
+if (window.innerHeight / window.innerWidth >  1.3)
 {
 	kaioIsVert = true;
 }
@@ -36,7 +36,7 @@ else
 
 //Create a master Kaio object to describe game state, game information, etc.
 var kaiomega = {
-	gamestate: "play",
+	gamestate: "title",
 	spriteWidth: canvas.width / 16,
 	spriteHeight: canvas.height / 10,
 	inEvent: false,
@@ -46,6 +46,19 @@ var kaiomega = {
 	yEnd: 0,
 	blocks: [],
 	backgrounds: [],
+	//determine if object should be painted onto the screen
+	onScreen: function(obj)
+	{
+		if (obj.x < canvas.width + 22 && obj.x + obj.width > -22
+		&& obj.y > -22 && obj.y + obj.height < canvas.height + 22)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	},
 	//determine if two things are colliding
 	collides: function(obj1, obj2)
 	{
@@ -119,14 +132,16 @@ var kaioImages = {
 		right: new Image()
 	},
 	backgrounds: {
-		grass: new Image()
-		
+		grass: new Image(),
+		path: new Image()
 	},
 	blocks: 
 	{
-		rock: new Image()
+		rock: new Image(),
+		tree: new Image()
 	
 	},
+	title: new Image(),
 	setPics: function(){
 		this.holder.src = "images/holder.png";
 		this.kaio.down.src = "images/kaio_down.png";
@@ -134,10 +149,52 @@ var kaioImages = {
 		this.kaio.left.src = "images/kaio_left.png";		
 		this.kaio.right.src = "images/kaio_right.png";		
 		this.backgrounds.grass.src = "images/grass.png";
+		this.backgrounds.path.src = "images/path.png";
 		this.blocks.rock.src = "images/rock.png";
+		this.blocks.tree.src = "images/tree.png";
+		this.title.src = "images/title.png";
 	}
 };
 kaioImages.setPics();
+
+//Create an object for the Title screen.
+var kaioTitle = {
+	img: kaioImages.title,
+	startText: "Press or Click the screen to start.",
+	timer: 0,
+	blinkText: function(){
+		this.timer++;
+		if (this.timer > 20 && this.timer < 40)
+		{
+			this.startText = " ";
+		}
+		else
+		{
+			this.startText = "Press or Click the screen to start.";
+		}
+		if (this.timer > 60)
+		{
+			this.timer = 0;
+		}
+	},
+	start: function(){
+		kaiomega.gamestate = "play";
+		populateRoom();
+	},
+	draw: function(){
+		ctx.drawImage(this.img, canvas.width * 0.2, canvas.height * 0.2, canvas.width * .5, canvas.height * .5);
+		ctx2.font = canvas.width * .055 + "px Arial";
+		ctx2.fillStyle = "white";
+		if (kaioIsVert == true)
+		{
+			ctx2.fillText(this.startText, canvas2.width * .02, canvas2.height * .1);
+		}
+		else
+		{
+			ctx2.fillText(this.startText, canvas2.width * .02, canvas2.height * .4);
+		}
+	}
+};
 
 /*Create a class for background images. If you want this background to fill everything,
 set the fill parameter to "fill".
@@ -181,6 +238,7 @@ var kaioObject = function(img, x, y, width, height){
 
 //Create a class for the characters.
 var kaioCharacter = function() {
+	this.name = "Player";
 	this.x = kaiomega.spriteWidth * 4;
 	this.y = kaiomega.spriteHeight * 3;
 	this.width = kaiomega.spriteWidth;
@@ -189,7 +247,9 @@ var kaioCharacter = function() {
 	this.sy = 0;
 	this.swidth = 50;
 	this.sheight = 50;
-	this.speed = (kaiomega.spriteHeight) * 0.08;
+	this.speedVar = (kaioIsVert) ? 0.11 : 0.08;
+	this.speed = (this.dir == "left" || this.dir == "right") ? 
+		(kaiomega.spriteWidth) * this.speedVar : (kaiomega.spriteHeight) * this.speedVar;
 	this.dir = "default";
 	this.mobile = false;
 	this.isInEvent = false;
@@ -212,22 +272,25 @@ var kaioCharacter = function() {
 		{
 		case "left":
 			objx -= this.speed;
+			break;
 		case "right":
 			objx += this.speed;
+			break;
 		case "up":
 			objy -= this.speed;
+			break;
 		case "down":
 			objy += this.speed;
+			break;
 		}
 		
 		for (i in kaiomega.blocks)
 		{
 		if (objx + this.width > kaiomega.blocks[i].x && objx < kaiomega.blocks[i].x + kaiomega.blocks[i].width &&
 			objy + this.height > kaiomega.blocks[i].y && objy < kaiomega.blocks[i].height + kaiomega.blocks[i].y)
-			{return true;}
-		else
-			{return false;}			
+			{return true;}		
 		}
+		return false;
 	},
 	this.move = function(){
 		this.timer++;
@@ -237,13 +300,19 @@ var kaioCharacter = function() {
 				this.img = this.pics.up;
 				if (!(this.collides()))
 				{
-					if (this.y - (canvas.height * 0.5) >= kaiomega.y)
+					if (this.y > canvas.height * 0.5 || kaiomega.y >= 0)
 					{
-						this.y -= this.speed;
+						if (this.y > -3)
+						{
+							this.y -= this.speed;
+						}
 					}
 					else
 					{
-						kaiomega.moveAll(this.dir);
+						if (kaiomega.y <= 0)
+						{
+							kaiomega.moveAll(this.dir);
+						}
 					}
 				}
 				break;
@@ -251,13 +320,19 @@ var kaioCharacter = function() {
 				this.img = this.pics.down;
 				if (!(this.collides()))
 				{			
-					if (this.y + this.height + (canvas.height * 0.5) >= kaiomega.yEnd * kaiomega.spriteHeight)
-					{			
-						this.y += this.speed;
+					if (this.y < canvas.height * 0.5 || kaiomega.yEnd <= canvas.height)
+					{	
+						if (this.y + this.width < canvas.height -4)
+						{
+							this.y += this.speed;
+						}
 					}
 					else
 					{
-						kaiomega.moveAll(this.dir);
+						if (kaiomega.yEnd >= canvas.height)
+						{
+							kaiomega.moveAll(this.dir);
+						}
 					}					
 				}
 				break;
@@ -265,13 +340,19 @@ var kaioCharacter = function() {
 				this.img = this.pics.left;
 				if (!(this.collides()))
 				{		
-					if (this.x - (canvas.width * 0.5) >= kaiomega.x)
-					{				
-						this.x -= this.speed;
+					if (this.x > canvas.width * 0.5 || kaiomega.x >= 0)
+					{		
+						if (this.x > -3)
+						{	
+							this.x -= this.speed;
+						}
 					}
 					else
 					{
+						if (kaiomega.x <= 0)
+						{
 						kaiomega.moveAll(this.dir);
+						}
 					}					
 				}
 				break;
@@ -279,9 +360,12 @@ var kaioCharacter = function() {
 				this.img = this.pics.right;
 				if (!(this.collides()))
 				{			
-					if (this.x + this.width + (canvas.width * 0.5) >= kaiomega.xEnd * kaiomega.spriteWidth)
-					{			
-						this.x += this.speed;
+					if (this.x < canvas.width * 0.5 || kaiomega.xEnd <= canvas.width)
+					{	
+						if (this.x + this.width < canvas.width + 3)
+						{
+							this.x += this.speed;
+						}
 					}
 					else
 					{
