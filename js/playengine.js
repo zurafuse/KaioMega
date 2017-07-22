@@ -19,9 +19,9 @@ function PlayUpdate(mod) {
 function PlayRender() {
 	//clear canvas
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx2.fillStyle = "black";
-	ctx2.fillRect(0, 0, canvas.width, canvas.height);
-	ctx2.fillStyle = "white";
+	ctx.fillStyle = "black";
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	ctx.fillStyle = "white";
 	//draw backgrounds
 	for (i in kaiomega.backgrounds)
 		{
