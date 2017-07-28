@@ -2,7 +2,10 @@
 document.addEventListener('keydown', function(e) {
 	if (kaiomega.gamestate == "title")
 	{
-		kaioTitle.start();
+		if (kaioTitle.state == "start")
+		{
+			kaioTitle.state = "select";
+		}
 	}
     var allowedKeys = {
         37: 'left',
@@ -44,53 +47,82 @@ document.addEventListener('keyup', function(e){
 	}
 });
 
+var origState = "default";
+
 window.addEventListener("click", function (e) {
-    var clientX = e.pageX;
-    var clientY = e.pageY;
+	var clientX = e.pageX;
+	var clientY = e.pageY;
 	console.log(clientX, kaioUI.menu.x);
 	console.log(clientY, kaioUI.menu.y);
 	
-	if (kaiomega.gamestate == "title")
+	if (kaiomega.gamestate == "play" || kaiomega.gamestate == "map")
 	{
-		kaioTitle.start();
-		window.removeEventListener("click");
+		origState = kaiomega.gamestate;
 	}
-	else if (kaiomega.gamestate == "play")
-	{	
-		if (clientX >= kaioUI.menu.x && clientX <= kaioUI.menu.x + kaioUI.menu.width &&
-			clientY >= kaioUI.menu.y && clientY <= kaioUI.menu.y + kaioUI.menu.height)
+	//to prevent double clicking, only listen for mouse clicks if user is using a touch screen.
+	if (!(kaiomega.isMobile))
+	{
+	//detect user input on title screen
+		if (kaiomega.gamestate == "title")
+		{
+			if (kaioTitle.state == "start")
 			{
-				kaiomega.gamestate = "menu";
+				kaioTitle.state = "select";
 			}
-	}
-	else if (kaiomega.gamestate == "menu")
-	{	
-		if (clientX >= kaioUI.menu.backIcon.x && clientX <= kaioUI.menu.backIcon.x + kaioUI.menu.backIcon.width &&
-			clientY >= kaioUI.menu.backIcon.y && clientY <= kaioUI.menu.backIcon.y + kaioUI.menu.backIcon.height)
+			else if (kaioTitle.state == "select")
 			{
-				kaiomega.gamestate = "play";
+				if (clientX >= kaioTitle.continueGame.x && clientX <= kaioTitle.continueGame.x + kaioTitle.continueGame.width &&
+					clientY >= kaioTitle.continueGame.y - (kaioTitle.continueGame.height * .8) && clientY <= kaioTitle.continueGame.y + (kaioTitle.continueGame.height * .6))
+				{
+					kaiomega.newGame == false;
+					loadGame();
+					kaiomega.start();
+				}
+				else if (clientX >= kaioTitle.newGame.x && clientX <= kaioTitle.newGame.x + kaioTitle.newGame.width &&
+					clientY >= kaioTitle.newGame.y - (kaioTitle.newGame.height * .8) && clientY <= kaioTitle.newGame.y + (kaioTitle.newGame.height * .6))
+				{
+					kaioTitle.state = "create";
+					charCreate();
+				}
 			}
+			
+		}		
+		//See if the user is pressing the menu button 
+		if (kaiomega.gamestate == "play" || kaiomega.gamestate == "map")
+		{	
+			if (clientX >= kaioUI.menu.x && clientX <= kaioUI.menu.x + kaioUI.menu.width &&
+				clientY >= kaioUI.menu.y && clientY <= kaioUI.menu.y + kaioUI.menu.height)
+				{
+					kaiomega.gamestate = "menu";
+				}
+		}
+		//See if the user is pressing the back button 
+		else if (kaiomega.gamestate == "menu")
+		{	
+			if (clientX >= kaioUI.menu.backIcon.x && clientX <= kaioUI.menu.backIcon.x + kaioUI.menu.backIcon.width &&
+				clientY >= kaioUI.menu.backIcon.y && clientY <= kaioUI.menu.backIcon.y + kaioUI.menu.backIcon.height)
+				{
+						kaiomega.gamestate = origState;
+				}
+		}
+		//See if user is pressing New Game or Continue at Title Menu
+		
 	}
-	
 }, false);
 
 // touch event handlers
 // Set up touch events for mobile, etc
 // touch event handlers
 // Set up touch events for mobile, etc
+
 window.addEventListener("touchstart", function (e) {
+	console.log(kaiomega.gamestate);
 	if (kaiomega.gamestate == "title")
 	{
 		kaiomega.isMobile = true;
-		kaioTitle.start();
 	}
   mousePos = getTouchPos(canvas, e);
   var touch = e.touches[0];
-  var mouseEvent = new MouseEvent("mousedown", {
-    clientX: touch.clientX,
-    clientY: touch.clientY
-  });
-  canvas.dispatchEvent(mouseEvent);
 }, false);
 
 window.addEventListener("touchend", function (e) {
@@ -103,7 +135,7 @@ function getTouchPos(canvasDom, touchEvent) {
   var thisXPos = touchEvent.touches[0].clientX;
   var thisYPos = touchEvent.touches[0].clientY;
 
-  
+ //Listen for the user touching the arrow keys 
   if (thisXPos < kaioUI.joyStick.left.x + (kaioUI.joyStick.left.width * 1.3) && thisXPos > kaioUI.joyStick.left.x * 0.7 &&
 	thisYPos > kaioUI.joyStick.left.y - (kaioUI.joyStick.left.height * 0.7) && thisYPos < kaioUI.joyStick.left.y + (kaioUI.joyStick.left.height * 0.7))
   {
@@ -143,29 +175,62 @@ function getTouchPos(canvasDom, touchEvent) {
 	kaioController.left = false;
 	kaioPlayer.dir = "down";
   }
+
+	//detect user input on title screen
+		if (kaiomega.gamestate == "title")
+		{
+			if (kaioTitle.state == "start")
+			{
+				kaioTitle.state = "select";
+			}
+			else if (kaioTitle.state == "select")
+			{
+				if (thisXPos >= kaioTitle.continueGame.x && thisXPos <= kaioTitle.continueGame.x + kaioTitle.continueGame.width &&
+					thisYPos >= kaioTitle.continueGame.y - (kaioTitle.continueGame.height * .8) && thisYPos <= kaioTitle.continueGame.y + (kaioTitle.continueGame.height * .6))
+				{
+					kaiomega.newGame == false;
+					loadGame();
+					kaiomega.start();
+				}
+				else if (thisXPos >= kaioTitle.newGame.x && thisXPos <= kaioTitle.newGame.x + kaioTitle.newGame.width &&
+					thisYPos >= kaioTitle.newGame.y - (kaioTitle.newGame.height * .8) && thisYPos <= kaioTitle.newGame.y + (kaioTitle.newGame.height * .6))
+				{
+					//Let the user enter his or her own name
+					kaioTitle.state = "create";
+					charCreate();
+				}
+			}
+			
+		}
   
-	if (kaiomega.gamestate == "play")
-	{	
+	if (kaiomega.gamestate == "play" || kaiomega.gamestate == "map")
+	{
+		origState = kaiomega.gamestate;
+	}
+
+ //See if the user is pressing the menu button 
+	if (kaiomega.gamestate == "play" || kaiomega.gamestate == "map")
+	{
 		if (thisXPos >= kaioUI.menu.x && thisXPos <= kaioUI.menu.x + kaioUI.menu.width &&
 			thisYPos >= kaioUI.menu.y && thisYPos <= kaioUI.menu.y + kaioUI.menu.height)
-			{
-				kaiomega.gamestate = "menu";
-			}
+		{
+				origState = kaiomega.gamestate;
+				kaiomega.gamestate = "menu";			
+		}			
 	}
+	//see if the user is pressing the "Back to Game" button.	
 	else if (kaiomega.gamestate == "menu")
-	{	
+	{
 		if (thisXPos >= kaioUI.menu.backIcon.x && thisXPos <= kaioUI.menu.backIcon.x + kaioUI.menu.backIcon.width &&
 			thisYPos >= kaioUI.menu.backIcon.y && thisYPos <= kaioUI.menu.backIcon.y + kaioUI.menu.backIcon.height)
-			{
-				kaiomega.gamestate = "play";
-			}
+		{				
+				kaiomega.gamestate = origState;
+		}		
 	}
   
 }
 
 function endTouchPos(canvasDom, touchEvent) {
-  var thisXPos = touchEvent.changedTouches[0].pageX;
-  var thisYPos = touchEvent.changedTouches[0].pageY;
 	kaioController.left = false;
 	kaioController.right = false;
 	kaioController.up = false;

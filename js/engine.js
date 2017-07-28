@@ -23,7 +23,7 @@ function update(mod) {
 				EventUpdate(mod);
 				break;
 		}
-	}		
+	}	
 }
 
 function render() {

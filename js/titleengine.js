@@ -1,6 +1,6 @@
 function TitleUpdate(mod) {
 	kaioTitle.blinkText();
-		
+	
 }
 
 function TitleRender() {
