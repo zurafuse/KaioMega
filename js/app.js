@@ -7,13 +7,6 @@ var requestAnimFrame =  window.requestAnimationFrame ||
                     function(callback) {
                         window.setTimeout(callback, 1000 / 1);
                     };
-					
-//check for the existence of the user account in the database
-var kaioCheckDB = window.indexedDB.open("kaioDatabase");
-	kaioCheckDB.onupgradeneeded = function() {
-		kaiomega.dbExists = false;
-		kaiomega.newGame = true;
-	}
 				
 //define images to reference in the map and room libraries			
 var backimg = kaioImages.backgrounds.img;
