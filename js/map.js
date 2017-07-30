@@ -103,12 +103,14 @@ var kaioMap =
 			sheight: kaioImages.backgrounds.reg0.sheight,
 			x: 6 * kaiomega.spriteWidth,
 			y: 3 * kaiomega.spriteHeight,
+			xOrig: 6 * kaiomega.spriteWidth,
+			yOrig: 3 * kaiomega.spriteHeight,			
 			width: 2 * kaiomega.spriteWidth,
 			height: 2 * kaiomega.spriteHeight			
 		},
 		{
 			locked: false,
-			id: 0,
+			id: 1,
 			obj: kaioImages.backgrounds.reg1,
 			sx: kaioImages.backgrounds.reg1.sx,
 			sy: kaioImages.backgrounds.reg1.sy,
@@ -116,6 +118,8 @@ var kaioMap =
 			sheight: kaioImages.backgrounds.reg1.sheight,
 			x: 14 * kaiomega.spriteWidth,
 			y: 4.5 * kaiomega.spriteHeight,
+			xOrig: 14 * kaiomega.spriteWidth,
+			yOrig: 4.5 * kaiomega.spriteHeight,
 			width: 1.5 * kaiomega.spriteWidth,
 			height: 1.5 * kaiomega.spriteHeight			
 		}
@@ -140,6 +144,14 @@ var kaioMap =
 		ctx.font = canvas.height * 0.12 + "px Arial";
 		ctx.fillText("WORLD MAP", canvas.width * 0.35, kaiomega.spriteHeight);
 		ctx.strokeText("WORLD MAP", canvas.width * 0.35, kaiomega.spriteHeight);		
+	},
+	resetRegions: function()
+	{
+		for (i in this.regions)
+		{
+			this.regions[i].x = this.regions[i].xOrig;
+			this.regions[i].y = this.regions[i].yOrig;			
+		}
 	}
 };
 

@@ -154,7 +154,11 @@ var kaioImages = {
 		rock: {sx: 300, sy: 0, swidth: 99, sheight: 99},
 		tree: {sx: 400, sy: 0, swidth: 99, sheight: 99},
 		reg0: {sx: 601, sy: 0, swidth: 99, sheight: 99},
-		reg1: {sx: 701, sy: 0, swidth: 99, sheight: 99}		
+		reg1: {sx: 701, sy: 0, swidth: 99, sheight: 99},		
+		path2: {sx: 801, sy: 0, swidth: 99, sheight: 99},			
+		pave: {sx: 901, sy: 0, swidth: 99, sheight: 99},			
+		house: {sx: 0, sy: 101, swidth: 99, sheight: 99},
+		rock2: {sx: 101, sy: 101, swidth: 99, sheight: 99}				
 	},
 	UI: 
 	{
@@ -358,7 +362,7 @@ var kaioCharacter = function() {
 				{
 					if (this.y > canvas.height * 0.5 || kaiomega.y >= 0)
 					{
-						if (this.y > -3)
+						if (this.y > 0 - kaiomega.spriteHeight)
 						{
 							this.y -= this.speed;
 						}
@@ -378,7 +382,7 @@ var kaioCharacter = function() {
 				{			
 					if (this.y < canvas.height * 0.5 || kaiomega.yEnd <= canvas.height)
 					{	
-						if (this.y + this.width < canvas.height -4)
+						if (this.y + this.width < canvas.height + kaiomega.spriteHeight)
 						{
 							this.y += this.speed;
 						}
@@ -398,7 +402,7 @@ var kaioCharacter = function() {
 				{		
 					if (this.x > canvas.width * 0.5 || kaiomega.x >= 0)
 					{		
-						if (this.x > -3)
+						if (this.x > 0 - kaiomega.spriteHeight)
 						{	
 							this.x -= this.speed;
 						}
@@ -418,7 +422,7 @@ var kaioCharacter = function() {
 				{			
 					if (this.x < canvas.width * 0.5 || kaiomega.xEnd <= canvas.width)
 					{	
-						if (this.x + this.width < canvas.width + 3)
+						if (this.x + this.width < canvas.width + kaiomega.spriteHeight)
 						{
 							this.x += this.speed;
 						}

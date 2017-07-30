@@ -13,7 +13,16 @@ function PlayUpdate(mod) {
 			{
 				kaioPlayer.sx = 0;
 			}
-	}	
+	}
+
+	if (kaioPlayer.x < 0 - (kaiomega.spriteWidth * 0.5) || kaioPlayer.x > canvas.width - (kaiomega.spriteWidth * 0.5) || 
+		kaioPlayer.y < 0 - (kaiomega.spriteHeight * 0.5) || kaioPlayer.y > canvas.height - (kaiomega.spriteHeight * 0.5))
+		{
+			kaiomega.gamestate = "map";
+			kaioMap.resetRegions();
+			popMap();
+		}
+	
 }
 
 function PlayRender() {

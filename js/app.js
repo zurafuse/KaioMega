@@ -16,6 +16,11 @@ var grass2img = kaioImages.backgrounds.grass2;
 var grass3img = kaioImages.backgrounds.grass3;
 var rockimg = kaioImages.backgrounds.rock;
 var treeimg = kaioImages.backgrounds.tree;
+var path2img = kaioImages.backgrounds.path2;
+var rock2img = kaioImages.backgrounds.rock2;
+var houseimg = kaioImages.backgrounds.house;
+var paveimg = kaioImages.backgrounds.pave;
+
 
 //Let the user create his or her own character name.
 var charName = document.createElement("INPUT");
@@ -62,3 +67,8 @@ function getCharCreate()
 	kaiomega.start();
 }
 
+//check to see if DB exists
+if (localStorage.getItem("playerName") == null || localStorage.getItem("playerName") == undefined)
+{
+	kaiomega.dbExists = false;
+}

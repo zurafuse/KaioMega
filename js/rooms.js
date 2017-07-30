@@ -105,7 +105,107 @@ var kaioRegions =
 					]
 				}
 			]
-		}
+		},
+		{
+			number: 0,
+			id: 1,
+			rooms: 
+			[	
+				{	id: 0,
+					x: 0,
+					y: 0,
+					xstart: 10,
+					ystart: 3,
+					width: 36,
+					height: 14,
+					backgrounds: 
+					[
+						{
+							obj: paveimg,
+							img: backimg,
+							width: 2,
+							height: 2,
+							type: "fill",
+							x: 0,
+							y: 0
+						},
+						{obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 0, y: 5}, {obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 1, y: 5},
+						{obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 3, y: 5}, {obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 2, y: 5},
+						{obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 4, y: 5}, {obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 5, y: 5},
+						{obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 6, y: 5}, {obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 7, y: 5},
+						{obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 8, y: 5}, {obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 9, y: 5},
+						{obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 10, y: 5}, {obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 11, y: 5},
+						{obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 12, y: 5}, {obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 13, y: 5},
+						{obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 14, y: 5}, {obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 15, y: 5},
+						{obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 16, y: 5}, {obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 17, y: 5},
+						{obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 18, y: 5}, {obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 19, y: 5},
+						{obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 19, y: 6}, {obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 19, y: 7},
+						{obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 19, y: 8}, {obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 19, y: 9},
+						{obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 19, y: 10}, {obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 19, y: 11},
+						{obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 19, y: 12}, {obj: path2img, img: backimg, width: 1, height: 1, type: "block", x: 19, y: 13}						
+					],
+					blocks: 
+					[
+						{
+							img: backimg,
+							x: 2,
+							y: 2,
+							width: 1,
+							height: 1,
+							obj: houseimg						
+						},
+						{
+							img: backimg,
+							x: 3,
+							y: 2,
+							width: 1,
+							height: 1,
+							obj: houseimg						
+						},
+						{
+							img: backimg,
+							x: 4,
+							y: 2,
+							width: 1,
+							height: 1,
+							obj: houseimg						
+						},
+						{
+							img: backimg,
+							x: 5,
+							y: 2,
+							width: 1,
+							height: 1,
+							obj: houseimg						
+						},
+						{
+							img: backimg,
+							x: 9,
+							y: 6,
+							width: 1,
+							height: 1,
+							obj: houseimg						
+						},
+						{
+							img: backimg,
+							x: 6,
+							y: 7,
+							width: 1,
+							height: 1,
+							obj: rock2img						
+						},
+						{
+							img: backimg,
+							x: 18,
+							y: 4,
+							width: 1,
+							height: 1,
+							obj: rock2img					
+						}							
+					]
+				}
+			]
+		}		
 
 	]
 };
